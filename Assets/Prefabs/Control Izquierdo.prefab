@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4242482846685892375, guid: b620b89a4837b024ebadfc6a6dafa38e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 85b2370b20ce9404aa05b6bb6dabd3c5, type: 2}
     - target: {fileID: 919132149155446097, guid: b620b89a4837b024ebadfc6a6dafa38e, type: 3}
       propertyPath: m_Name
       value: l_hand_skeletal_lowres (1)
