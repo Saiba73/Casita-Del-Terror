@@ -32,7 +32,7 @@ public class Enimgo1Patrullar : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        
+
         if (puntoPatrulla != null && puntoPatrulla.Length > 0)
         {
             indicePuntos = Random.Range(0, puntoPatrulla.Length);
@@ -78,12 +78,9 @@ public class Enimgo1Patrullar : MonoBehaviour
             case EstadosPatrulla.Stuneado:
                 if (Time.time >= tiempoFinStun)
                 {
+                    Debug.Log("STUN FINALIZADO");
                     agent.isStopped = false;
                     ElegirNuevoPuntoPatrulla();
-                    estadoEnemigo = EstadosPatrulla.Patrullando;
-                }
-                else
-                {
                     estadoEnemigo = EstadosPatrulla.Patrullando;
                 }
                 break;
@@ -92,7 +89,11 @@ public class Enimgo1Patrullar : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Pala"))
+        {
+            Debug.Log("COLISION PALA");
+            AplicarStun();
+        }
     }
 
     public void AplicarStun()
@@ -109,8 +110,8 @@ public class Enimgo1Patrullar : MonoBehaviour
 
     void ElegirNuevoPuntoPatrulla()
     {
-        if (puntoPatrulla.Length == 0) return;
-        
+        if (puntoPatrulla == null || puntoPatrulla.Length == 0) return;
+
         indicePuntos = Random.Range(0, puntoPatrulla.Length);
         agent.isStopped = false;
         agent.SetDestination(puntoPatrulla[indicePuntos].position);

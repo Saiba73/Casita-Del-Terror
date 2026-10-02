@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Gano
+  - Pala
   layers:
   - Default
   - TransparentFX

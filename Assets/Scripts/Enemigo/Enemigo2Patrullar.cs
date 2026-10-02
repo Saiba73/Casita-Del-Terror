@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,10 +21,10 @@ public class EnemigoSaltador : MonoBehaviour
     [SerializeField] private Transform jugador;
 
     [Header("Ajustes de Salto")]
-    [SerializeField] private float rangoAtaque = 6f;       // Distancia para iniciar el salto
-    [SerializeField] private float alturaSalto = 3f;        // Altura máxima de la parábola
-    [SerializeField] private float duracionSalto = 1.2f;    // Tiempo en segundos para completar el salto
-    [SerializeField] private float tiempoEntreSaltos = 2f;  // Cooldown entre saltos
+    [SerializeField] private float rangoAtaque = 6f;
+    [SerializeField] private float alturaSalto = 3f;
+    [SerializeField] private float duracionSalto = 1.2f;
+    [SerializeField] private float tiempoEntreSaltos = 2f;
     private float tiempoSiguienteSalto;
 
     [Header("Ajustes de Stun")]
@@ -53,13 +54,11 @@ public class EnemigoSaltador : MonoBehaviour
         switch (estadoEnemigo)
         {
             case EstadosEnemigo.Patrullando:
-                // Patrulla normal
                 if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
                 {
                     ElegirNuevoPuntoPatrulla();
                 }
 
-                // Si detecta al jugador y pasó el cooldown, inicia la secuencia de salto
                 if (distanciaAJugador <= rangoAtaque && Time.time >= tiempoSiguienteSalto)
                 {
                     StartCoroutine(RutinaSalto(jugador.position));
@@ -67,7 +66,7 @@ public class EnemigoSaltador : MonoBehaviour
                 break;
 
             case EstadosEnemigo.Saltando:
-                // El movimiento y la física del salto se gestionan dentro de la Corrutina (RutinaSalto)
+                
                 break;
 
             case EstadosEnemigo.Stuneado:
@@ -82,17 +81,27 @@ public class EnemigoSaltador : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Pala"))
+        {
+            Debug.Log("COLISION PALA");
+            estadoEnemigo = EstadosEnemigo.Stuneado;
+            AplicarStun();
+        }
+    }
+
     IEnumerator RutinaSalto(Vector3 posObjetivo)
     {
         estadoEnemigo = EstadosEnemigo.Saltando;
 
-        // 1. Apagar el NavMeshAgent para permitir movimiento en 3D (eje Y)
+        
         agent.enabled = false;
 
         Vector3 posInicio = transform.position;
         float tiempoTranscurrido = 0f;
 
-        // Orientar al enemigo hacia la posición final antes de saltar
+        
         Vector3 direccionLook = (posObjetivo - posInicio).normalized;
         direccionLook.y = 0;
         if (direccionLook != Vector3.zero)
@@ -100,15 +109,15 @@ public class EnemigoSaltador : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(direccionLook);
         }
 
-        // 2. Animar la parábola del salto
+        
         while (tiempoTranscurrido < duracionSalto)
         {
             float t = tiempoTranscurrido / duracionSalto;
 
-            // Interpolación lineal sobre el plano XZ
+            
             Vector3 posActual = Vector3.Lerp(posInicio, posObjetivo, t);
 
-            // Añadir curva parabólica en Y (Sinergia de la curva cuadrática: 4 * t * (1 - t))
+            
             posActual.y += Mathf.Sin(t * Mathf.PI) * alturaSalto;
 
             transform.position = posActual;
@@ -117,14 +126,14 @@ public class EnemigoSaltador : MonoBehaviour
             yield return null;
         }
 
-        // 3. Garantizar que aterrice exactamente en el punto final
+        
         transform.position = posObjetivo;
 
-        // 4. Reactivar el NavMeshAgent re-enganchándolo al NavMesh más cercano
+        
         agent.enabled = true;
         agent.Warp(transform.position);
 
-        // Configurar cooldown de salto y regresar a patrullar
+        
         tiempoSiguienteSalto = Time.time + tiempoEntreSaltos;
         ElegirNuevoPuntoPatrulla();
         estadoEnemigo = EstadosEnemigo.Patrullando;
@@ -132,7 +141,7 @@ public class EnemigoSaltador : MonoBehaviour
 
     public void AplicarStun()
     {
-        // Cancelar saltos activos si entra en stun durante el aire
+        
         StopAllCoroutines();
 
         estadoEnemigo = EstadosEnemigo.Stuneado;
