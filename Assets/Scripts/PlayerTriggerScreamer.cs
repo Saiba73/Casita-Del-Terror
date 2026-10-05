@@ -23,10 +23,8 @@ public class PlayerTriggerScreamer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("COLISION");
         if (other.CompareTag("Enemy"))
         {
-            Debug.Log("ENEMIGO");
             imageScreamer[0].enabled = true;
             Audios[0].mute = false;
             Audios[0].Play();

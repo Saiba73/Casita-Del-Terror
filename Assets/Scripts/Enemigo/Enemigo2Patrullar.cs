@@ -29,10 +29,12 @@ public class EnemigoSaltador : MonoBehaviour
 
     [Header("Ajustes de Stun")]
     [SerializeField] private float duracionStun = 5f;
+    [SerializeField] private float velocidadCaidaStun = 12f; // Velocidad a la que cae al piso en el stun
     private float tiempoFinStun;
 
     private int indicePuntos;
     private NavMeshAgent agent;
+    private Coroutine corrutinaSaltoActual;
 
     void Start()
     {
@@ -61,12 +63,11 @@ public class EnemigoSaltador : MonoBehaviour
 
                 if (distanciaAJugador <= rangoAtaque && Time.time >= tiempoSiguienteSalto)
                 {
-                    StartCoroutine(RutinaSalto(jugador.position));
+                    corrutinaSaltoActual = StartCoroutine(RutinaSalto(jugador.position));
                 }
                 break;
 
             case EstadosEnemigo.Saltando:
-                
                 break;
 
             case EstadosEnemigo.Stuneado:
@@ -86,7 +87,6 @@ public class EnemigoSaltador : MonoBehaviour
         if (other.CompareTag("Pala"))
         {
             Debug.Log("COLISION PALA");
-            estadoEnemigo = EstadosEnemigo.Stuneado;
             AplicarStun();
         }
     }
@@ -95,13 +95,11 @@ public class EnemigoSaltador : MonoBehaviour
     {
         estadoEnemigo = EstadosEnemigo.Saltando;
 
-        
         agent.enabled = false;
 
         Vector3 posInicio = transform.position;
         float tiempoTranscurrido = 0f;
 
-        
         Vector3 direccionLook = (posObjetivo - posInicio).normalized;
         direccionLook.y = 0;
         if (direccionLook != Vector3.zero)
@@ -109,15 +107,11 @@ public class EnemigoSaltador : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(direccionLook);
         }
 
-        
         while (tiempoTranscurrido < duracionSalto)
         {
             float t = tiempoTranscurrido / duracionSalto;
 
-            
             Vector3 posActual = Vector3.Lerp(posInicio, posObjetivo, t);
-
-            
             posActual.y += Mathf.Sin(t * Mathf.PI) * alturaSalto;
 
             transform.position = posActual;
@@ -126,23 +120,25 @@ public class EnemigoSaltador : MonoBehaviour
             yield return null;
         }
 
-        
         transform.position = posObjetivo;
 
-        
         agent.enabled = true;
         agent.Warp(transform.position);
 
-        
         tiempoSiguienteSalto = Time.time + tiempoEntreSaltos;
         ElegirNuevoPuntoPatrulla();
         estadoEnemigo = EstadosEnemigo.Patrullando;
+        corrutinaSaltoActual = null;
     }
 
     public void AplicarStun()
     {
-        
-        StopAllCoroutines();
+        // Detener la corrutina de salto activa
+        if (corrutinaSaltoActual != null)
+        {
+            StopCoroutine(corrutinaSaltoActual);
+            corrutinaSaltoActual = null;
+        }
 
         estadoEnemigo = EstadosEnemigo.Stuneado;
         tiempoFinStun = Time.time + duracionStun;
@@ -152,6 +148,41 @@ public class EnemigoSaltador : MonoBehaviour
             agent.isStopped = true;
             agent.velocity = Vector3.zero;
         }
+
+        // Si fue stuneado en el aire, iniciamos la caída hacia el suelo
+        StartCoroutine(RutinaCaidaStun());
+    }
+
+    IEnumerator RutinaCaidaStun()
+    {
+        // Buscamos la posición del suelo proyectando hacia el NavMesh o mediante Raycast
+        Vector3 posSuelo = transform.position;
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+        {
+            posSuelo = hit.position;
+        }
+        else if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit rayHit, 10f))
+        {
+            posSuelo = rayHit.point;
+        }
+
+        // Caída progresiva hacia la altura del suelo
+        while (transform.position.y > posSuelo.y + 0.05f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, posSuelo, velocidadCaidaStun * Time.deltaTime);
+            yield return null;
+        }
+
+        // Ajuste final al punto exacto del piso
+        transform.position = posSuelo;
+
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.Warp(posSuelo);
+            agent.isStopped = true;
+        }
     }
 
     void ElegirNuevoPuntoPatrulla()
@@ -159,7 +190,7 @@ public class EnemigoSaltador : MonoBehaviour
         if (puntoPatrulla == null || puntoPatrulla.Length == 0) return;
 
         indicePuntos = Random.Range(0, puntoPatrulla.Length);
-        
+
         if (agent.enabled)
         {
             agent.isStopped = false;
