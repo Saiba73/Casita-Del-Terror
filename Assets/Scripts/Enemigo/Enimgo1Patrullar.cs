@@ -3,15 +3,14 @@ using UnityEngine.AI;
 
 public class Enimgo1Patrullar : MonoBehaviour
 {
-    enum estadosPatrulla
+    enum EstadosPatrulla
     {
         Patrullando,
         Persiguiendo,
-        Volviendo,
         Stuneado
     }
 
-    estadosPatrulla estadoEnemigo = estadosPatrulla.Patrullando;
+    [SerializeField] private EstadosPatrulla estadoEnemigo = EstadosPatrulla.Patrullando;
 
     [Header("Puntos de patrullaje")]
     [SerializeField] private Transform[] puntoPatrulla;
@@ -19,50 +18,104 @@ public class Enimgo1Patrullar : MonoBehaviour
     [Header("Referencia de jugador")]
     [SerializeField] private Transform jugador;
 
-    private int indicePuntos;
+    [Header("Ajustes de Persecución")]
+    [SerializeField] private float intervaloActualizacionRuta = 0.2f;
+    private float tiempoSiguienteActualizacion;
 
-    NavMeshAgent agent;
+    [Header("Ajustes de Stun")]
+    [SerializeField] private float duracionStun = 5f;
+    private float tiempoFinStun;
+
+    private int indicePuntos;
+    private NavMeshAgent agent;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        indicePuntos = Random.Range(0, puntoPatrulla.Length);
-        agent.SetDestination(puntoPatrulla[indicePuntos].position);
+
+        if (puntoPatrulla != null && puntoPatrulla.Length > 0)
+        {
+            indicePuntos = Random.Range(0, puntoPatrulla.Length);
+            agent.SetDestination(puntoPatrulla[indicePuntos].position);
+        }
     }
 
-    
     void Update()
     {
-        switch(estadoEnemigo)
-        {
-            case estadosPatrulla.Patrullando:
-                    if (Vector3.Distance(this.transform.position, puntoPatrulla[indicePuntos].position) < 0.1f)
-                    {
-                        indicePuntos = Random.Range(0, puntoPatrulla.Length);
-                        agent.SetDestination(puntoPatrulla[indicePuntos].position);
-                        Debug.Log(indicePuntos);
-                    }
-                    if(Vector3.Distance(this.transform.position, jugador.position) < 1f)
-                    {
-                        agent.SetDestination(jugador.position);
-                        estadoEnemigo = estadosPatrulla.Persiguiendo;
-                    }
-                break;
-            case estadosPatrulla.Persiguiendo:
-                    agent.SetDestination(jugador.position);
-                    if(Vector3.Distance(this.transform.position, jugador.position) > 5f)
-                    {
-                        indicePuntos = Random.Range(0, puntoPatrulla.Length);
-                        agent.SetDestination(puntoPatrulla[indicePuntos].position);
-                        Debug.Log(indicePuntos);
-                        estadoEnemigo = estadosPatrulla.Patrullando;
-                    }
-                break;
-            case estadosPatrulla.Stuneado:
-                
-                break;
-            case estadosPatrulla.Volviendo:
+        if (jugador == null) return;
 
+        float distanciaAJugador = Vector3.Distance(transform.position, jugador.position);
+
+        switch (estadoEnemigo)
+        {
+            case EstadosPatrulla.Patrullando:
+                if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
+                {
+                    ElegirNuevoPuntoPatrulla();
+                }
+
+                if (distanciaAJugador < 5f)
+                {
+                    estadoEnemigo = EstadosPatrulla.Persiguiendo;
+                    tiempoSiguienteActualizacion = 0f;
+                }
+                break;
+
+            case EstadosPatrulla.Persiguiendo:
+                if (Time.time >= tiempoSiguienteActualizacion)
+                {
+                    agent.SetDestination(jugador.position);
+                    tiempoSiguienteActualizacion = Time.time + intervaloActualizacionRuta;
+                }
+
+                if (distanciaAJugador > 8f)
+                {
+                    ElegirNuevoPuntoPatrulla();
+                    estadoEnemigo = EstadosPatrulla.Patrullando;
+                }
+                break;
+
+            case EstadosPatrulla.Stuneado:
+                if (Time.time >= tiempoFinStun)
+                {
+                    Debug.Log("STUN FINALIZADO");
+                    agent.isStopped = false;
+                    ElegirNuevoPuntoPatrulla();
+                    estadoEnemigo = EstadosPatrulla.Patrullando;
+                }
                 break;
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("TOCO LA ALGO");
+        if (other.CompareTag("Pala"))
+        {
+            Debug.Log("COLISION PALA");
+            Destroy(this.gameObject);
+            AplicarStun();
+        }
+    }
+
+    public void AplicarStun()
+    {
+        estadoEnemigo = EstadosPatrulla.Stuneado;
+        tiempoFinStun = Time.time + duracionStun;
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+    }
+
+    void ElegirNuevoPuntoPatrulla()
+    {
+        if (puntoPatrulla == null || puntoPatrulla.Length == 0) return;
+
+        indicePuntos = Random.Range(0, puntoPatrulla.Length);
+        agent.isStopped = false;
+        agent.SetDestination(puntoPatrulla[indicePuntos].position);
     }
 }

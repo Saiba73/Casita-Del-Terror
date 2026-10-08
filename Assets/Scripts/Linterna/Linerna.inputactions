@@ -1,0 +1,47 @@
+{
+    "version": 1,
+    "name": "Linerna",
+    "maps": [
+        {
+            "name": "Linterna",
+            "id": "26fc3fad-3eab-4d8b-95e4-6b4df939980e",
+            "actions": [
+                {
+                    "name": "button",
+                    "type": "Button",
+                    "id": "b1e19114-726c-40da-91e9-c3f1d80dc69e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "528579b2-6afb-4307-a899-bc4a1410eb3b",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0e59857a-9d85-4db5-b99f-da04bf01821d",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
