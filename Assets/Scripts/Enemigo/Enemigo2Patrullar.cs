@@ -29,8 +29,11 @@ public class EnemigoSaltador : MonoBehaviour
 
     [Header("Ajustes de Stun")]
     [SerializeField] private float duracionStun = 5f;
-    [SerializeField] private float velocidadCaidaStun = 12f; // Velocidad a la que cae al piso en el stun
+    [SerializeField] private float velocidadCaidaStun = 12f;
     private float tiempoFinStun;
+
+    [Header("Animacion")]
+    [SerializeField] private Animator e2Animator;
 
     private int indicePuntos;
     private NavMeshAgent agent;
@@ -56,6 +59,8 @@ public class EnemigoSaltador : MonoBehaviour
         switch (estadoEnemigo)
         {
             case EstadosEnemigo.Patrullando:
+                e2Animator.SetInteger("EstadoAnimacion", 0);
+                
                 if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
                 {
                     ElegirNuevoPuntoPatrulla();
@@ -68,11 +73,14 @@ public class EnemigoSaltador : MonoBehaviour
                 break;
 
             case EstadosEnemigo.Saltando:
+                
                 break;
 
             case EstadosEnemigo.Stuneado:
+                e2Animator.SetInteger("EstadoAnimacion", 2);
                 if (Time.time >= tiempoFinStun)
                 {
+                    
                     agent.enabled = true;
                     agent.isStopped = false;
                     ElegirNuevoPuntoPatrulla();
@@ -84,6 +92,7 @@ public class EnemigoSaltador : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("TOCO LA ALGO");
         if (other.CompareTag("Pala"))
         {
             Debug.Log("COLISION PALA");
@@ -94,6 +103,7 @@ public class EnemigoSaltador : MonoBehaviour
     IEnumerator RutinaSalto(Vector3 posObjetivo)
     {
         estadoEnemigo = EstadosEnemigo.Saltando;
+        e2Animator.SetInteger("EstadoAnimacion", 1);
 
         agent.enabled = false;
 
@@ -102,6 +112,9 @@ public class EnemigoSaltador : MonoBehaviour
 
         Vector3 direccionLook = (posObjetivo - posInicio).normalized;
         direccionLook.y = 0;
+        
+        
+        
         if (direccionLook != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direccionLook);
@@ -133,7 +146,7 @@ public class EnemigoSaltador : MonoBehaviour
 
     public void AplicarStun()
     {
-        // Detener la corrutina de salto activa
+        
         if (corrutinaSaltoActual != null)
         {
             StopCoroutine(corrutinaSaltoActual);
@@ -149,13 +162,13 @@ public class EnemigoSaltador : MonoBehaviour
             agent.velocity = Vector3.zero;
         }
 
-        // Si fue stuneado en el aire, iniciamos la caída hacia el suelo
+        
         StartCoroutine(RutinaCaidaStun());
     }
 
     IEnumerator RutinaCaidaStun()
     {
-        // Buscamos la posición del suelo proyectando hacia el NavMesh o mediante Raycast
+        
         Vector3 posSuelo = transform.position;
 
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
@@ -167,14 +180,14 @@ public class EnemigoSaltador : MonoBehaviour
             posSuelo = rayHit.point;
         }
 
-        // Caída progresiva hacia la altura del suelo
+        
         while (transform.position.y > posSuelo.y + 0.05f)
         {
             transform.position = Vector3.MoveTowards(transform.position, posSuelo, velocidadCaidaStun * Time.deltaTime);
             yield return null;
         }
 
-        // Ajuste final al punto exacto del piso
+        
         transform.position = posSuelo;
 
         if (agent != null)

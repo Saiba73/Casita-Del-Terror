@@ -89,7 +89,7 @@ public class Enimgo1Patrullar : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("TOCO LA ALGO");
+        //Debug.Log("TOCO LA ALGO");
         if (other.CompareTag("Pala"))
         {
             Debug.Log("COLISION PALA");
