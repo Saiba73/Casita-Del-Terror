@@ -4104,9 +4104,19 @@
                     "priority": 0
                 },
                 {
-                    "name": "BotonesFrontales Derecho",
+                    "name": "Btn_Secundario_Derecho",
                     "type": "Button",
                     "id": "5ec53f00-a1be-4e3e-9ed4-5cc5cb4fed40",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Btn_Secundario_Izquierdo",
+                    "type": "Button",
+                    "id": "942ca9b4-8c65-4c68-89a5-de6dc00cdda9",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -4194,23 +4204,12 @@
                 },
                 {
                     "name": "",
-                    "id": "8383c2e7-fa3f-4bb0-b2c4-d4a2750f45aa",
-                    "path": "<XRController>{RightHand}/{PrimaryButton}",
+                    "id": "7452636f-ccc1-4d21-a5d8-31592d22a9b8",
+                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "BotonesFrontales Derecho",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2b6133b9-b830-41f9-8df3-a22df044f26e",
-                    "path": "<XRController>{RightHand}/{SecondaryButton}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "BotonesFrontales Derecho",
+                    "action": "Btn_Secundario_Izquierdo",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -4332,6 +4331,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Activate Value Izquierdo",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ca6a99cf-6005-43b7-8cce-1c034d031487",
+                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Btn_Secundario_Derecho",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
