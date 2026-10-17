@@ -1319197,7 +1319197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::linterna
   lightGrab: 0
-  linternaTransform: {fileID: 0}
+  linternaTransform: {fileID: 951793788}
   playerTransform: {fileID: 951793788}
 --- !u!1001 &1446213751
 PrefabInstance:

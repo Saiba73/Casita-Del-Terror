@@ -26,6 +26,9 @@ public class Enimgo1Patrullar : MonoBehaviour
     [SerializeField] private float duracionStun = 5f;
     private float tiempoFinStun;
 
+    [Header("Animacion")]
+    [SerializeField] private Animator eAnimator;
+
     private int indicePuntos;
     private NavMeshAgent agent;
 
@@ -49,6 +52,8 @@ public class Enimgo1Patrullar : MonoBehaviour
         switch (estadoEnemigo)
         {
             case EstadosPatrulla.Patrullando:
+                eAnimator.SetInteger("EstadoAnim", 0);
+                Debug.Log("ANIMATION1");
                 if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
                 {
                     ElegirNuevoPuntoPatrulla();
@@ -62,6 +67,8 @@ public class Enimgo1Patrullar : MonoBehaviour
                 break;
 
             case EstadosPatrulla.Persiguiendo:
+                eAnimator.SetInteger("EstadoAnim", 0);
+                Debug.Log("ANIMATION2");
                 if (Time.time >= tiempoSiguienteActualizacion)
                 {
                     agent.SetDestination(jugador.position);
@@ -78,6 +85,8 @@ public class Enimgo1Patrullar : MonoBehaviour
             case EstadosPatrulla.Stuneado:
                 if (Time.time >= tiempoFinStun)
                 {
+                    eAnimator.SetInteger("EstadoAnim", 1);
+                    Debug.Log("ANIMATION3");
                     Debug.Log("STUN FINALIZADO");
                     agent.isStopped = false;
                     ElegirNuevoPuntoPatrulla();
