@@ -6,13 +6,16 @@ public class PlayerTriggerScreamer : MonoBehaviour
     
     [SerializeField] CapsuleCollider collider;
     [SerializeField] AudioSource[] Audios;
-    [SerializeField] RawImage[] imageScreamer;
+    [SerializeField] GameObject[] AnimScreamer;
 
     void Start()
     {
         //collider = GetComponent<CapsuleCollider>();
-        imageScreamer[0].enabled = false;
-        imageScreamer[1].enabled = false;
+        for (int i = 0; i < AnimScreamer.Length; i++)
+        {
+            AnimScreamer[0].SetActive(false);
+        }
+        
     }
 
     
@@ -25,13 +28,21 @@ public class PlayerTriggerScreamer : MonoBehaviour
     {
         if (other.CompareTag("Enemy"))
         {
-            imageScreamer[0].enabled = true;
+            Destroy(other.gameObject);
+            AnimScreamer[1].SetActive(true);
+            Audios[0].mute = false;
+            Audios[0].Play();
+        }
+        else if(other.CompareTag("Enemy2"))
+        {
+            Destroy(other.gameObject);
+            AnimScreamer[2].SetActive(true);
             Audios[0].mute = false;
             Audios[0].Play();
         }
         else if (other.CompareTag("Gano"))
         {
-            imageScreamer[1].enabled = true;
+            AnimScreamer[0].SetActive(true);
             Audios[1].mute = false;
             Audios[1].Play();
         }

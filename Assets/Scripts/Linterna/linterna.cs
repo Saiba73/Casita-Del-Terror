@@ -4,21 +4,27 @@ using UnityEngine.InputSystem;
 
 public class linterna : MonoBehaviour
 {
-    PlayerInput playerInput;
 
+    public bool lightGrab = false;
+    public Transform linternaTransform;
+    public Transform playerTransform;
 
-    void Start()
+    private void Update()
     {
-        playerInput = GetComponent<PlayerInput>();
-        Debug.Log(playerInput.name);
+        if(linternaTransform.position.y < 0)
+        {
+            linternaTransform.position = playerTransform.position + new Vector3(0.0f, 3.0f, 1.5f);
+        }
     }
 
-    
-    void Update()
+
+    public void LightGrabbed()
     {
-        if(playerInput.actions["Btn_Secundario_Derecho"].WasPressedThisFrame())
-        {
-            Debug.Log("HELLO");
-        }
+        lightGrab = true;
+    }
+
+    public void LightLetGo()
+    {
+        lightGrab = false;
     }
 }

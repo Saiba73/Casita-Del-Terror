@@ -4104,7 +4104,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Btn_Secundario_Derecho",
+                    "name": "Btn_Primario_Derecho",
                     "type": "Button",
                     "id": "5ec53f00-a1be-4e3e-9ed4-5cc5cb4fed40",
                     "expectedControlType": "",
@@ -4114,7 +4114,7 @@
                     "priority": 0
                 },
                 {
-                    "name": "Btn_Secundario_Izquierdo",
+                    "name": "Btn_Primario_Izquierdo",
                     "type": "Button",
                     "id": "942ca9b4-8c65-4c68-89a5-de6dc00cdda9",
                     "expectedControlType": "",
@@ -4205,11 +4205,11 @@
                 {
                     "name": "",
                     "id": "7452636f-ccc1-4d21-a5d8-31592d22a9b8",
-                    "path": "<XRController>{LeftHand}/{SecondaryButton}",
+                    "path": "<XRController>{LeftHand}/{PrimaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Btn_Secundario_Izquierdo",
+                    "action": "Btn_Primario_Izquierdo",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -4337,11 +4337,22 @@
                 {
                     "name": "",
                     "id": "ca6a99cf-6005-43b7-8cce-1c034d031487",
-                    "path": "<XRController>{RightHand}/{SecondaryButton}",
+                    "path": "<XRController>{RightHand}/{PrimaryButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Btn_Secundario_Derecho",
+                    "action": "Btn_Primario_Derecho",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "51c7ee4d-b564-41e1-b9bb-3173cebf5a64",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Btn_Primario_Derecho",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

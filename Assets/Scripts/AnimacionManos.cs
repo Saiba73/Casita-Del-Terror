@@ -8,6 +8,7 @@ public class AnimacionManos : MonoBehaviour
     [SerializeField] RiggeadorManos manoDerecha;
     [SerializeField] RiggeadorManos manoIzquierda;
     [SerializeField] GameObject SpotLight;
+    [SerializeField] linterna linternaBool;
 
     private bool spotlihgtBool = true;
     void Start()
@@ -27,9 +28,14 @@ public class AnimacionManos : MonoBehaviour
         manoDerecha.triggerSlider = playerinput.actions["Activate Value Derecho"].ReadValue<float>();
         //manoDerecha.botonAPresionado = playerinput.actions["BotonesFrontales Derecho"].IsPressed();
 
-        if (playerinput.actions["Btn_Secundario_Derecho"].WasPressedThisFrame())
+        if (playerinput.actions["Btn_Primario_Derecho"].WasPressedThisFrame() && linternaBool.lightGrab)
         {
             Debug.Log("HELLO");
+            SpotLight.SetActive(!spotlihgtBool);
+            spotlihgtBool = !spotlihgtBool;
+        }
+        else if (playerinput.actions["Btn_Primario_Izquierdo"].WasPressedThisFrame() && linternaBool.lightGrab)
+        {
             SpotLight.SetActive(!spotlihgtBool);
             spotlihgtBool = !spotlihgtBool;
         }
