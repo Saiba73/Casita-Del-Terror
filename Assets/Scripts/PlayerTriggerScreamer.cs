@@ -20,16 +20,23 @@ public class PlayerTriggerScreamer : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
+        {
             Trigger(other.gameObject, 0, screamerUI, 0);
+        }
         else if (other.CompareTag("Enemy2"))
+        {
             Trigger(other.gameObject, 1, screamerUI, 0);
+        }
         else if (other.CompareTag("Gano"))
+        {
             Trigger(null, 0, ganoUI, 1);
+        }
+            
     }
 
     void Trigger(GameObject enemy, int animIndex, GameObject ui, int audioIndex)
     {
-        Debug.Log($"Screamer triggered by {(enemy ? enemy.name : "Gano")}");
+        
 
         if (enemy != null) Destroy(enemy);
 
