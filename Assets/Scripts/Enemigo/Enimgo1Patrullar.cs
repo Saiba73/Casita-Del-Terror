@@ -29,6 +29,7 @@ public class Enimgo1Patrullar : MonoBehaviour
     [Header("Animacion")]
     [SerializeField] private Animator eAnimator;
 
+    public bool EstaPersiguiendo;
     private int indicePuntos;
     private NavMeshAgent agent;
 
@@ -68,6 +69,7 @@ public class Enimgo1Patrullar : MonoBehaviour
 
             case EstadosPatrulla.Persiguiendo:
                 eAnimator.SetInteger("EstadoAnim", 0);
+                EstaPersiguiendo = true;
                 Debug.Log("ANIMATION2");
                 if (Time.time >= tiempoSiguienteActualizacion)
                 {

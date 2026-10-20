@@ -35,6 +35,8 @@ public class EnemigoSaltador : MonoBehaviour
     [Header("Animacion")]
     [SerializeField] private Animator e2Animator;
 
+    public bool EstaSaltando;
+
     private int indicePuntos;
     private NavMeshAgent agent;
     private Coroutine corrutinaSaltoActual;
@@ -42,6 +44,7 @@ public class EnemigoSaltador : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        
 
         if (puntoPatrulla != null && puntoPatrulla.Length > 0)
         {
@@ -59,6 +62,7 @@ public class EnemigoSaltador : MonoBehaviour
         switch (estadoEnemigo)
         {
             case EstadosEnemigo.Patrullando:
+                
                 e2Animator.SetInteger("EstadoAnimacion", 0);
                 
                 if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
@@ -102,6 +106,7 @@ public class EnemigoSaltador : MonoBehaviour
 
     IEnumerator RutinaSalto(Vector3 posObjetivo)
     {
+        EstaSaltando = true;
         estadoEnemigo = EstadosEnemigo.Saltando;
         e2Animator.SetInteger("EstadoAnimacion", 1);
 
